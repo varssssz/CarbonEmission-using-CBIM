@@ -230,3 +230,9 @@ frontend/dist/
 # Uploaded files and temporary processing data
 uploads/
 tmp/
+
+# RAG generated vector database
+data/chroma_db/
+
+# Downloaded GHG Protocol source documents
+data/guidance/*.pdf
