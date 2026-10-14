@@ -72,6 +72,64 @@ class TestIngestion(unittest.TestCase):
 
 
 class TestGuidanceRetrieval(unittest.TestCase):
+    
+    def test_negative_max_distance_is_rejected(self):
+        with self.assertRaises(ValueError):
+            search_guidance("electricity", max_distance=-0.1)
+
+    @patch("backend.rag.retriever.create_collection")
+    def test_max_distance_filters_weak_matches(self, mock_create_collection):
+        mock_collection = MagicMock()
+        mock_collection.count.return_value = 2
+        mock_collection.query.return_value = {
+            "documents": [["Relevant passage", "Weak passage"]],
+            "metadatas": [[
+                {
+                    "source_filename": "Scope 2 Guidance.pdf",
+                    "page_number": 12,
+                    "chunk_index": 0,
+                },
+                {
+                    "source_filename": "Scope 2 Guidance.pdf",
+                    "page_number": 13,
+                    "chunk_index": 0,
+                },
+            ]],
+            "distances": [[0.2, 0.9]],
+        }
+        mock_create_collection.return_value = mock_collection
+
+        results = search_guidance("purchased electricity", max_distance=0.5)
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["text"], "Relevant passage")
+
+    @patch("backend.rag.retriever.create_collection")
+    def test_duplicate_passages_are_removed(self, mock_create_collection):
+        mock_collection = MagicMock()
+        mock_collection.count.return_value = 2
+        mock_collection.query.return_value = {
+            "documents": [["Same passage", "Same   passage"]],
+            "metadatas": [[
+                {
+                    "source_filename": "standard.pdf",
+                    "page_number": 4,
+                    "chunk_index": 0,
+                },
+                {
+                    "source_filename": "standard.pdf",
+                    "page_number": 4,
+                    "chunk_index": 1,
+                },
+            ]],
+            "distances": [[0.2, 0.3]],
+        }
+        mock_create_collection.return_value = mock_collection
+
+        results = search_guidance("emissions", n_results=2)
+
+        self.assertEqual(len(results), 1)
+
     def test_empty_query_is_rejected(self):
         with self.assertRaises(ValueError):
             search_guidance("")
