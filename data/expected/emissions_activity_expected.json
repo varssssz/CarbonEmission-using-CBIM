@@ -1,0 +1,27 @@
+
+[
+  {
+    "supplier": "Example Energy Ltd",
+    "reporting_period": "2025",
+    "activity": "Electricity",
+    "quantity": 1200.0,
+    "unit": "kWh",
+    "emissions_value": 420.5
+  },
+  {
+    "supplier": "Green Transport Ltd",
+    "reporting_period": "2025",
+    "activity": "Company Vehicles",
+    "quantity": 850.0,
+    "unit": "km",
+    "emissions_value": 185.2
+  },
+  {
+    "supplier": "Example Energy Ltd",
+    "reporting_period": "2026",
+    "activity": "Electricity",
+    "quantity": 1500.0,
+    "unit": "kWh",
+    "emissions_value": 525.0
+  }
+]

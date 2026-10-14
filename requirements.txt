@@ -1,0 +1,6 @@
+
+pandas
+pydantic
+PyMuPDF
+openpyxl
+xlrd
